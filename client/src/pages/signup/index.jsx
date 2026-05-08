@@ -4,6 +4,7 @@ import { signup } from "../../api/auth";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { showLoader, hideLoader } from "../../redux/loaderSlice";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
   const [user, setUser] = useState({
@@ -14,7 +15,7 @@ function Signup() {
   });
 
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const validateEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
@@ -92,7 +93,7 @@ function Signup() {
         toast.success(response.message);
 
         setTimeout(() => {
-          window.location.href = "/login";
+          navigate("/login");
         }, 1000);
       } else {
         toast.error(response.message);
