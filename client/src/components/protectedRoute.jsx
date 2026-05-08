@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { getLoggedInUser, getAllUsers } from '../api/user';
 import { getAllChats } from '../api/chat';
 import { useDispatch } from 'react-redux';
-import { showLoader, hideLoader } from '../redux/loaderSlice';
 import { useSelector } from 'react-redux';
 import { setAllUsers, setUser, setAllChats } from '../redux/userSlice';
 
@@ -19,9 +18,7 @@ function ProtectedRoute({ children }) {
 
         try {
 
-            dispatch(showLoader());
             response = await getLoggedInUser();
-            dispatch(hideLoader());
 
             if (!response.success) {
 
@@ -33,7 +30,6 @@ function ProtectedRoute({ children }) {
             }
         } catch (error) {
 
-            dispatch(hideLoader());
             navigate("/login");
             
         }
@@ -43,9 +39,7 @@ function ProtectedRoute({ children }) {
       let response = null;
 
       try {
-        dispatch(showLoader());
         response = await getAllUsers();
-        dispatch(hideLoader());
 
         if (!response.success) {
           navigate("/login");
@@ -53,7 +47,6 @@ function ProtectedRoute({ children }) {
           dispatch(setAllUsers(response.data));
         }
       } catch (error) {
-        dispatch(hideLoader());
         navigate("/login");
       }
     };
@@ -62,9 +55,7 @@ function ProtectedRoute({ children }) {
       let response = null;
 
       try {
-        dispatch(showLoader());
         response = await getAllChats();
-        dispatch(hideLoader());
 
         if (!response.success) {
           navigate("/login");
@@ -72,7 +63,6 @@ function ProtectedRoute({ children }) {
           dispatch(setAllChats(response.data));
         }
       } catch (error) {
-        dispatch(hideLoader());
         navigate("/login");
       }
     };

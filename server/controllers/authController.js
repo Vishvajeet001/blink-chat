@@ -119,6 +119,13 @@ authRouter.post("/login", async (req, res) => {
       });
     }
 
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).send({
+        message: "Server configuration error",
+        success: false,
+      });
+    }
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });

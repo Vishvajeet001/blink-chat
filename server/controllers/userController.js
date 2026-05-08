@@ -68,7 +68,6 @@ userRouter.post("/upload-profile-pic", authMiddleware, async (req, res) => {
       success: true,
       data: updatedUser,
     });
-
   } catch (error) {
     res.send({
       message: error.message,
@@ -76,6 +75,5 @@ userRouter.post("/upload-profile-pic", authMiddleware, async (req, res) => {
     });
   }
 });
-
 
 export default userRouter;

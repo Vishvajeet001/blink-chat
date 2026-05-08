@@ -171,9 +171,7 @@ function ChatArea({ socket }) {
           if (response.success) {
             setMessages(response.data);
           }
-        } catch (error) {
-          console.error("Error refetching messages:", error);
-        }
+        } catch (error) {}
       }
     };
 
