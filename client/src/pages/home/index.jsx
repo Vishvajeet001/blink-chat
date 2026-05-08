@@ -4,7 +4,7 @@ import Sidebar from './components/sidebar'
 import ChatArea from './components/chat'
 import { useSelector } from 'react-redux';
 import { io } from "socket.io-client";
-const socket = io("http://localhost:5000");
+const socket = io("https://blink-chat-server.onrender.com");
 
 function Home() {
   const { selectedChat, user } = useSelector((state) => state.userReducer);
