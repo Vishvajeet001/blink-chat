@@ -6,14 +6,18 @@ import chatRouter from "./controllers/chatController.js";
 import messageRouter from "./controllers/messageController.js";
 import http from "http";
 import { Server } from "socket.io";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 
 app.use(cors());
 
-app.use(express.json({
-  limit: "15mb",
-}));
+app.use(
+  express.json({
+    limit: "15mb",
+  }),
+);
 
 const server = http.createServer(app);
 
@@ -35,7 +39,6 @@ app.use("/api/message", messageRouter);
 const onlineUsers = new Set();
 
 io.on("connection", (socket) => {
-  
   socket.on("join-room", (userId) => {
     socket.join(userId);
   });
@@ -55,19 +58,30 @@ io.on("connection", (socket) => {
   });
 
   socket.on("user-login", (userId) => {
-    if(!onlineUsers.has(userId)){
+    if (!onlineUsers.has(userId)) {
       onlineUsers.add(userId);
     }
     io.emit("online-users", Array.from(onlineUsers));
   });
 
   socket.on("user-offline", (userId) => {
-    if(onlineUsers.has(userId)){
+    if (onlineUsers.has(userId)) {
       onlineUsers.delete(userId);
     }
     io.emit("online-users-updated", Array.from(onlineUsers));
   });
+});
 
+// Serve static files from the client build directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const clientBuildPath = path.join(__dirname, "../client/dist");
+
+app.use(express.static(clientBuildPath));
+
+// Fallback to index.html for non-API routes (client-side routing)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(clientBuildPath, "index.html"));
 });
 
 export default server;
