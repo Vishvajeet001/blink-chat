@@ -7,6 +7,7 @@ import messageRouter from "./controllers/messageController.js";
 import http from "http";
 import { Server } from "socket.io";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 
 const app = express();
@@ -76,12 +77,27 @@ io.on("connection", (socket) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const clientBuildPath = path.join(__dirname, "../client/dist");
+const clientIndexFile = path.join(clientBuildPath, "index.html");
 
-app.use(express.static(clientBuildPath));
+if (fs.existsSync(clientIndexFile)) {
+  app.use(express.static(clientBuildPath));
 
-// Fallback to index.html for non-API routes (client-side routing)
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(clientBuildPath, "index.html"));
-});
+  // Fallback to index.html for non-API routes (client-side routing)
+  app.get(/.*/, (req, res) => {
+    res.sendFile(clientIndexFile);
+  });
+} else {
+  console.warn(
+    `Client build not found at ${clientIndexFile}. Static files are disabled.`,
+  );
+
+  app.get(/.*/, (req, res) => {
+    res
+      .status(404)
+      .send(
+        "Client app not built. Run `npm install && npm run build` inside /client or add a deploy build step.",
+      );
+  });
+}
 
 export default server;
